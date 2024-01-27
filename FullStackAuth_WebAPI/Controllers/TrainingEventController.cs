@@ -19,7 +19,7 @@ public class TrainingEventController : ControllerBase
     [HttpPost]
     public IActionResult CreateTrainingEvent([FromBody] TrainingEvent trainingEvent)
     {
-        // Ensure that the associated routine exists
+      
         var existingRoutine = _context.Routines.Find(trainingEvent.RoutineId);
         if (existingRoutine == null)
         {
