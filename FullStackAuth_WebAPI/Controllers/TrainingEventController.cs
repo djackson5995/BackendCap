@@ -2,73 +2,76 @@
 using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
-[ApiController]
-[Route("api/trainingevents")]
-public class TrainingEventController : ControllerBase
+namespace FullStackAuth_WebAPI.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public TrainingEventController(ApplicationDbContext context)
+    [Authorize]
+    [ApiController]
+    [Route("api/trainingevents")]
+    public class TrainingEventController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    [HttpPost]
-    public IActionResult CreateTrainingEvent([FromBody] TrainingEvent trainingEvent)
-    {
-      
-        var existingRoutine = _context.Routines.Find(trainingEvent.RoutineId);
-        if (existingRoutine == null)
+        public TrainingEventController(ApplicationDbContext context)
         {
-            return NotFound("Routine not found");
+            _context = context;
         }
 
-        _context.TrainingEvents.Add(trainingEvent);
-        _context.SaveChanges();
-
-        return Ok(trainingEvent);
-    }
-
-    [HttpPut("{id}")]
-    public IActionResult UpdateTrainingEvent(int id, [FromBody] TrainingEvent updatedTrainingEvent)
-    {
-        var existingTrainingEvent = _context.TrainingEvents.Find(id);
-
-        if (existingTrainingEvent == null)
+        [HttpPost]
+        public IActionResult CreateTrainingEvent([FromBody] TrainingEvent trainingEvent)
         {
-            return NotFound();
+            var existingRoutine = _context.Routines.Find(trainingEvent.RoutineId);
+            if (existingRoutine == null)
+            {
+                return NotFound("Routine not found");
+            }
+
+            _context.TrainingEvents.Add(trainingEvent);
+            _context.SaveChanges();
+
+            return Ok(trainingEvent);
         }
 
-        existingTrainingEvent.Date = updatedTrainingEvent.Date;
-        existingTrainingEvent.RoutineId = updatedTrainingEvent.RoutineId;
-        existingTrainingEvent.UserId = updatedTrainingEvent.UserId;
-
-        _context.SaveChanges();
-
-        return Ok(existingTrainingEvent);
-    }
-
-    [HttpGet("{id}")]
-    public IActionResult GetTrainingEvent(int id)
-    {
-        var trainingEvent = _context.TrainingEvents.Find(id);
-
-        if (trainingEvent == null)
+        [HttpPut("{id}")]
+        public IActionResult UpdateTrainingEvent(int id, [FromBody] TrainingEvent updatedTrainingEvent)
         {
-            return NotFound();
+            var existingTrainingEvent = _context.TrainingEvents.Find(id);
+
+            if (existingTrainingEvent == null)
+            {
+                return NotFound();
+            }
+
+            existingTrainingEvent.Date = updatedTrainingEvent.Date;
+            existingTrainingEvent.RoutineId = updatedTrainingEvent.RoutineId;
+            existingTrainingEvent.UserId = updatedTrainingEvent.UserId;
+
+            _context.SaveChanges();
+
+            return Ok(existingTrainingEvent);
         }
 
-        return Ok(trainingEvent);
-    }
+        [HttpGet("{id}")]
+        public IActionResult GetTrainingEvent(int id)
+        {
+            var trainingEvent = _context.TrainingEvents.Find(id);
 
-    [HttpGet]
-    public IActionResult GetAllTrainingEvents()
-    {
-        var trainingEvents = _context.TrainingEvents.Include(te => te.Routine).ToList();
+            if (trainingEvent == null)
+            {
+                return NotFound();
+            }
 
-        return Ok(trainingEvents);
+            return Ok(trainingEvent);
+        }
+
+        [HttpGet]
+        public IActionResult GetAllTrainingEvents()
+        {
+            var trainingEvents = _context.TrainingEvents.Include(te => te.Routine).ToList();
+
+            return Ok(trainingEvents);
+        }
     }
 }

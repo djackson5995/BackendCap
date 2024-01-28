@@ -1,7 +1,9 @@
 ﻿using FullStackAuth_WebAPI.Data;
 using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize]
 [ApiController]
 [Route("api/exercises")]
 public class ExerciseController : ControllerBase
@@ -16,10 +18,8 @@ public class ExerciseController : ControllerBase
     [HttpPost]
     public IActionResult CreateExercise([FromBody] Exercise exercise)
     {
-
         _context.Exercises.Add(exercise);
         _context.SaveChanges();
-
         return Ok(exercise);
     }
 
@@ -33,7 +33,6 @@ public class ExerciseController : ControllerBase
             return NotFound();
         }
 
-
         existingExercise.Type = updatedExercise.Type;
         existingExercise.Weight = updatedExercise.Weight;
         existingExercise.Reps = updatedExercise.Reps;
@@ -43,6 +42,7 @@ public class ExerciseController : ControllerBase
 
         return Ok(existingExercise);
     }
+
     [HttpGet("{id}")]
     public IActionResult GetExercise(int id)
     {
@@ -55,5 +55,4 @@ public class ExerciseController : ControllerBase
 
         return Ok(exercise);
     }
-
 }

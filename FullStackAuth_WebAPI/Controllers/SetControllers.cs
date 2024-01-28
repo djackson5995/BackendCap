@@ -1,7 +1,9 @@
 ﻿using FullStackAuth_WebAPI.Data;
 using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize]
 [ApiController]
 [Route("api/sets")]
 public class SetsController : ControllerBase
@@ -16,7 +18,6 @@ public class SetsController : ControllerBase
     [HttpPost]
     public IActionResult LogSets([FromBody] Set set)
     {
-
         if (set == null || set.ExerciseId <= 0 || set.TrainingEventId <= 0)
         {
             return BadRequest("Invalid set data");
@@ -39,7 +40,6 @@ public class SetsController : ControllerBase
     [HttpGet("exercise/{exerciseId}")]
     public IActionResult GetSetsByExercise(int exerciseId)
     {
-
         var sets = _context.Sets.Where(s => s.ExerciseId == exerciseId).ToList();
 
         if (sets == null || sets.Count == 0)
@@ -53,7 +53,6 @@ public class SetsController : ControllerBase
     [HttpGet("trainingEvent/{trainingEventId}")]
     public IActionResult GetSetsByTrainingEvent(int trainingEventId)
     {
-
         var sets = _context.Sets.Where(s => s.TrainingEventId == trainingEventId).ToList();
 
         if (sets == null || sets.Count == 0)
@@ -64,4 +63,3 @@ public class SetsController : ControllerBase
         return Ok(sets);
     }
 }
-
